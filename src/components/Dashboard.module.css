@@ -1,0 +1,332 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-style: normal;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+.maincontainer {
+  background: #ffffff;
+  box-shadow: 0px 44px 84px 6px #d8d9db;
+  border-radius: 30px;
+  display: flex;
+}
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  border-right: 1px solid #dbdbdb;
+}
+
+.sidebar .sidebarHeader {
+  border-bottom: 1px solid #dbdbdb;
+}
+.sidebar .sidebarHeader .sidebarHeaderContent {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 32px 0px 32px 0px;
+}
+.sidebar .sidebarHeader .sidebarHeaderContent .sidebarContent {
+  display: flex;
+}
+.sidebar
+  .sidebarHeader
+  .sidebarHeaderContent
+  .sidebarContent
+  .sidebarHeaderContentText {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: #0d062d;
+  padding-left: 11px;
+}
+
+.sidebar .sidebarMenu .sidebarHome,
+.sidebarTasks,
+.sidebarSettings,
+.sidebarMembers {
+  display: flex;
+  margin-left: 24px;
+}
+
+.sidebar .sidebarMenu .sidebarHome {
+  margin-top: 33px;
+}
+.sidebar .sidebarMenu .sidebarTasks {
+  margin-top: 79px;
+}
+
+.sidebar .sidebarMenu .sidebarMembers {
+  margin-top: 32px;
+}
+
+.sidebar .sidebarMenu .sidebarSettings {
+  margin-top: 32px;
+}
+
+.sidebar .sidebarMenu .sidebarLine {
+  width: 224px;
+  height: 0px;
+  border: 1px solid #dbdbdb;
+  margin: 34px 13px 30px 13px;
+}
+
+.sidebar .sidebarMenu .sidebarMenuContentText {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #787486;
+  margin-left: 15px;
+}
+
+.sidebar .sidebarProjects .addProject {
+  display: flex;
+  margin-left: 22px;
+}
+
+.sidebar .sidebarProjects .addProject p {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+  text-transform: uppercase;
+  color: #787486;
+  margin-right: 101px;
+}
+
+.sidebar .sidebarProjects .projectContent .projectDetails {
+  display: flex;
+  align-items: center;
+  margin: 31px 0px 30px 24px;
+}
+
+.sidebar .sidebarProjects .projectContent .projectIndex {
+  width: 8px;
+  height: 8px;
+  background: #ffa500;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
+.sidebar .sidebarProjects .projectContent .projectName {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #787486;
+}
+.maincontainerright {
+  width: calc(100% - 250px);
+}
+.maincontainerright .maincontainerrightHeader {
+  border-bottom: 1px solid #dbdbdb;
+}
+.maincontainerright .maincontainerrightHeader .a {
+  display: flex;
+  justify-content: end;
+  padding: 25px 50px;
+}
+
+.maincontainerright .maincontainerrightHeader .userText {
+  margin-right: 18px;
+}
+
+.maincontainerright .maincontainerrightHeader .userText .userName {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: right;
+  color: #0d062d;
+}
+
+.maincontainerright .maincontainerrightHeader .userText .userAddress {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: right;
+  color: #787486;
+}
+
+.maincontainerright .maincontainerrightHeader .profileimage {
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+  margin-right: 7.5px;
+}
+
+.maincontainerright .maincontainerrightContent .projectnameandinvite {
+  display: flex;
+  align-items: center;
+  margin: 42px 48px;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .projectInfo {
+  display: flex;
+  margin-right: 516px;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .projectInfo
+  p {
+  font-weight: 600;
+  font-size: 46px;
+  line-height: 56px;
+  text-transform: capitalize;
+  color: #0d062d;
+  margin-right: 22px;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .projectInfo
+  img {
+  margin-right: 22px;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .inviteuserinfo {
+  display: flex;
+  align-items: center;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .inviteuserinfo
+  p {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  text-transform: capitalize;
+  color: #5030e5;
+  margin-right: 12px;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .inviteuserinfo
+  .inviteuserimage {
+  height: 15px;
+  width: 15px;
+  margin-right: 8.5px;
+}
+
+.maincontainerright
+  .maincontainerrightContent
+  .projectnameandinvite
+  .inviteuserinfo
+  .usersimage {
+  height: 38px;
+  width: 158px;
+}
+
+.maincontainerright .filtersection {
+  display: flex;
+  margin: 0px 0px 42px 48px;
+}
+
+.maincontainerright .filtersection .filter {
+  display: flex;
+  padding: 13px 17px;
+  border: 1px solid #787486;
+  border-radius: 6px;
+  margin-right: 12px;
+}
+
+.maincontainerright .filtersection .filter .filtericonimage {
+  margin-right: 8px;
+}
+
+.maincontainerright .filtersection .filter p {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  text-transform: capitalize;
+  color: #787486;
+}
+
+.maincontainerright .filtersection .filter .downarrowimage {
+  margin-left: 12px;
+  opacity: 0.8;
+}
+
+.maincontainerright .filtersection .filterbydate {
+  display: flex;
+  padding: 13px 17px;
+  border: 1px solid #787486;
+  border-radius: 6px;
+}
+
+.maincontainerright .filtersection .filterbydate .calendarimage {
+  margin-right: 8px;
+}
+
+.maincontainerright .filtersection .filterbydate p {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  text-transform: capitalize;
+  color: #787486;
+}
+
+.maincontainerright .filtersection .filterbydate .downarrowimage {
+  margin-left: 12px;
+  opacity: 0.8;
+}
+
+.maincontainerright .tasksection .todosection {
+  background: #f5f5f5;
+  border-radius: 16px 16px 0px 0px;
+  width: 354px;
+  margin-left: 48px;
+}
+
+.maincontainerright .tasksection .todosection .todoHeader {
+  display: flex;
+  align-items: center;
+  padding: 26px 22px 29px 20px;
+}
+
+.maincontainerright .tasksection .todosection .todoHeader .tododot {
+  height: 8px;
+  width: 8px;
+  background: #5030e5;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.maincontainerright .tasksection .todosection .todoHeader .todotext {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #0d062d;
+  margin-right: 18px;
+}
+
+.maincontainerright .tasksection .todosection .todoHeader .todolength {
+  background: #e0e0e0;
+  border-radius: 70%;
+  padding: 3px 7px 3px 5px;
+  margin-right: 190px;
+}
+
+.maincontainerright .tasksection .todosection .todoHeader .todoimage {
+  height: 20px;
+  width: 20px;
+}
