@@ -12,7 +12,7 @@ p {
 }
 .mainFormContainer {
   background-color: #f0eff4;
-  height: 800px;
+  height: 1200px;
   width: 700px;
   margin: 0 auto;
   position: relative;
@@ -71,4 +71,18 @@ p {
 
 input[type="file"] {
   display: none;
+}
+
+.mainFormContainer .uploadfileImage {
+  border: 1px dashed grey;
+}
+
+.mainFormContainer .image {
+  height: 90px;
+  width: 90px;
+  margin: 10px 200px;
+}
+
+.mainFormContainer .link {
+  text-decoration: none;
 }

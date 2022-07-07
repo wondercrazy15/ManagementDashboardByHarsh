@@ -1,8 +1,9 @@
 import { React, useState, useEffect } from "react";
 import Input from "../../atoms/Input";
 import styles from "./Signup.module.css";
+import { Link, useNavigate } from "react-router-dom";
+import profileImage from "../../assets/profileimage.png";
 import { useForm, Controller } from "react-hook-form";
-import validation from "../../utils/validation";
 import { collection, addDoc } from "firebase/firestore/lite";
 import { auth, db } from "../../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -10,6 +11,7 @@ import { storage } from "../../firebase/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [onChangeData, setOnChangeData] = useState({
     firstname: "",
     lastname: "",
@@ -19,6 +21,10 @@ const Signup = () => {
     state: "",
     country: "",
   });
+  const [firebaseError, setFirebaseError] = useState("");
+  const [preview, setPreview] = useState();
+  const [selectedFile, setSelectedFile] = useState();
+  const [photoUrl, setPhotoUrl] = useState("");
 
   const {
     register,
@@ -41,6 +47,8 @@ const Signup = () => {
     },
   });
 
+  const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
   useEffect(() => {
     const subscription = watch((data) => {
       setOnChangeData(data);
@@ -49,10 +57,44 @@ const Signup = () => {
       };
     });
   }, [watch]);
-  const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  // const uploadFile = () => {
-  //   document.getElementById("selectFile").click();
-  // };
+
+  const uploadFile = () => {
+    document.getElementById("selectFile").click();
+  };
+
+  const onSelectFile = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setSelectedFile(undefined);
+      return;
+    }
+    setSelectedFile(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreview(undefined);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setPreview(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
+
+  const upload = async (file) => {
+    const fileRef = ref(storage, "images");
+    const snapshot = await uploadBytes(fileRef, file);
+    const purl = await getDownloadURL(fileRef);
+    return purl;
+  };
+
+  useEffect(() => {
+    upload(selectedFile).then((res) => {
+      setPhotoUrl(res);
+    });
+  }, [photoUrl]);
+
+  // console.log(selectedFile);
+
   const onSubmit = (data) => {
     createUserWithEmailAndPassword(auth, data.email, data.password)
       .then(async (res) => {
@@ -66,10 +108,12 @@ const Signup = () => {
           confirmpassword: data.confirmpassword,
           state: data.state,
           country: data.country,
+          url: photoUrl,
         });
+        navigate("/");
       })
       .catch((error) => {
-        console.log(error.message);
+        setFirebaseError(error.message);
       });
   };
   return (
@@ -181,24 +225,49 @@ const Signup = () => {
                 <p className={styles.error}>{errors.country.message}</p>
               )}
             </div>
-            {/* <div>
-              <button onClick={uploadFile}>Hii</button>
+            <div>
+              {selectedFile ? (
+                <img
+                  src={preview}
+                  alt='noprofileImagephoto'
+                  className={styles.image}
+                />
+              ) : (
+                <img
+                  src={profileImage}
+                  alt='noprofileImagephoto'
+                  className={styles.image}
+                />
+              )}
+              <button
+                type='button'
+                onClick={uploadFile}
+                className={styles.uploadfileImage}
+              >
+                upload profile picture
+              </button>
               <input
                 {...register("picture", {
                   onChange: (e) => {
-                    // onSelectFile(e);
+                    onSelectFile(e);
                   },
                 })}
                 type='file'
                 id='selectFile'
               />
-            </div> */}
+            </div>
+            <div>
+              <p className={styles.error}>{firebaseError.slice(16)}</p>
+            </div>
             <div>
               <button type='submit'>Sign up</button>
             </div>
             <div className={styles.formText}>
               <p>
-                already registered? <span className={styles.text}>Login</span>
+                already registered?{" "}
+                <Link to='/' className={styles.link}>
+                  <span className={styles.text}>Login</span>
+                </Link>
               </p>
             </div>
           </form>

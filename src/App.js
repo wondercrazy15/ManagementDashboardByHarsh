@@ -1,10 +1,12 @@
 import React from "react";
-import Dashboard from "./components/Dashboard";
+import ApplicationRoutes from "./routes/Routes";
+import CurrentUser from "./utils/currentUser";
 
 export const App = () => {
   return (
     <>
-      <Dashboard />
+      <ApplicationRoutes />
+      <CurrentUser />
     </>
   );
 };
