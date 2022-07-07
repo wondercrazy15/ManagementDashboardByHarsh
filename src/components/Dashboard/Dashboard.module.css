@@ -330,3 +330,7 @@ p {
   height: 20px;
   width: 20px;
 }
+
+.maincontainer .logout {
+  cursor: pointer;
+}

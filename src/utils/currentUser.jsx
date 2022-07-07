@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { React, useEffect } from "react";
 import { Get_CurrentUser } from "../redux/currentUser/currentUserAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/firebase";
-import { signOut } from "firebase/auth";
 import { query, collection, getDocs, where } from "firebase/firestore/lite";
 
-function CurrentUser() {
-  const dispatch = useDispatch();
+const CurrentUser = () => {
   const [user, loading, error] = useAuthState(auth);
-  const userDetail = useSelector((state) => state);
-  console.log(userDetail);
-
+  const dispatch = useDispatch();
   const fetchUserData = async () => {
     try {
       const q = query(collection(db, "user"), where("uid", "==", user?.uid));
@@ -33,17 +29,6 @@ function CurrentUser() {
     }
   };
 
-  //   const logout = () => {
-  //     signOut(auth);
-  //     setFirstName("");
-  //     setLastName("");
-  //     setEmail("");
-  //     setPhoneNumber("");
-  //     setRole("");
-  //     setPhotoUrl("");
-  //     setUid("");
-  //   };
-
   useEffect(() => {
     if (loading) return;
     if (!user) return error;
@@ -51,6 +36,6 @@ function CurrentUser() {
   }, [user, loading]);
 
   return <></>;
-}
+};
 
 export default CurrentUser;

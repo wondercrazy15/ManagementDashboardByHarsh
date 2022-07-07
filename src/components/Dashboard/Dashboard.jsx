@@ -1,22 +1,66 @@
-import React from "react";
+import { React, useEffect } from "react";
 import styles from "./Dashboard.module.css";
-import colorFilter from "../assets/colorfilter.svg";
-import calendar from "../assets/calendar.svg";
-import filterIcon from "../assets/filterIcon.svg";
-import users from "../assets/users.svg";
-import inviteuser from "../assets/inviteuser.svg";
-import editIcon from "../assets/editIcon.svg";
-import linkIcon from "../assets/linkIcon.svg";
-import home from "../assets/home.svg";
-import members from "../assets/members.svg";
-import settings from "../assets/settings.svg";
-import tasks from "../assets/tasks.svg";
-import downarrow from "../assets/downarrow.svg";
-import profileimage from "../assets/profileimage.svg";
-import addProject from "../assets/addProject.svg";
-import sidebarArrow from "../assets/siderbar_arrow.svg";
+import colorFilter from "../../assets/colorfilter.svg";
+import calendar from "../../assets/calendar.svg";
+import filterIcon from "../../assets/filterIcon.svg";
+import users from "../../assets/users.svg";
+import inviteuser from "../../assets/inviteuser.svg";
+import editIcon from "../../assets/editIcon.svg";
+import linkIcon from "../../assets/linkIcon.svg";
+import home from "../../assets/home.svg";
+import members from "../../assets/members.svg";
+import settings from "../../assets/settings.svg";
+import tasks from "../../assets/tasks.svg";
+import downarrow from "../../assets/downarrow.svg";
+import profileimage from "../../assets/profileimage.svg";
+import addProject from "../../assets/addProject.svg";
+import sidebarArrow from "../../assets/siderbar_arrow.svg";
+import { LogoutUser } from "../../redux/currentUser/currentUserAction";
+import { signOut } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { auth, db } from "../../firebase/firebase";
+import { Link, useNavigate } from "react-router-dom";
+import ProjectModal from "../Modal/ProjectModal";
+import { query, collection, getDocs, where } from "firebase/firestore/lite";
 
 export const Dashboard = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    signOut(auth);
+    const userdata = {
+      firstname: "",
+      lastname: "",
+      email: "",
+      country: "",
+      state: "",
+      uid: "",
+      url: "",
+    };
+    dispatch(LogoutUser(userdata));
+    navigate("/");
+  };
+
+  const fetchUserData = async () => {
+    const a = [];
+    try {
+      const q = query(collection(db, "project"));
+      const doc = await getDocs(q);
+      const data = doc.docs[0].data();
+      const dataId = doc.docs[0].id;
+      doc.forEach((doc) => {
+        a.push(doc.data());
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    console.log(a);
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
     <>
       <div className={styles.maincontainer}>
@@ -52,7 +96,14 @@ export const Dashboard = () => {
           <div className={styles.sidebarProjects}>
             <div className={styles.addProject}>
               <p>my projects</p>
-              <img src={addProject} alt='noprojectimage' />
+              <img
+                src={addProject}
+                alt='noprojectimage'
+                type='button'
+                data-bs-toggle='modal'
+                data-bs-target='#exampleModal'
+              />
+              <ProjectModal />
             </div>
             <div className={styles.projectContent}>
               <div className={styles.projectDetails}>
@@ -86,7 +137,28 @@ export const Dashboard = () => {
                 alt='noprofileimage'
                 className={styles.profileimage}
               />
-              <img src={downarrow} alt='nodownarrowimage' />
+
+              <div className='dropdown'>
+                <img
+                  src={downarrow}
+                  alt='nodownarrowimage'
+                  className='dropdown-toggle'
+                  type='button'
+                  id='dropdownMenuButton1'
+                  data-bs-toggle='dropdown'
+                  aria-expanded='false'
+                />
+                <ul
+                  className='dropdown-menu'
+                  aria-labelledby='dropdownMenuButton1'
+                >
+                  <li>
+                    <p className={styles.logout} onClick={handleLogOut}>
+                      Logout
+                    </p>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div className={styles.maincontainerrightContent}>

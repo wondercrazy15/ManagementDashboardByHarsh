@@ -1,8 +1,8 @@
 import { React, useState, useEffect } from "react";
 import Input from "../../atoms/Input";
 import styles from "../Signup/Signup.module.css";
-import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase";
+import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useForm, Controller } from "react-hook-form";
 
