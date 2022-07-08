@@ -13,15 +13,13 @@ import settings from "../../assets/settings.svg";
 import tasks from "../../assets/tasks.svg";
 import downarrow from "../../assets/downarrow.svg";
 import profileimage from "../../assets/profileimage.svg";
-import addProject from "../../assets/addProject.svg";
 import sidebarArrow from "../../assets/siderbar_arrow.svg";
 import { LogoutUser } from "../../redux/currentUser/currentUserAction";
 import { signOut } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { auth, db } from "../../firebase/firebase";
 import { Link, useNavigate } from "react-router-dom";
-import ProjectModal from "../Modal/ProjectModal";
-import { query, collection, getDocs, where } from "firebase/firestore/lite";
+import ProjectDetail from "../ProjectDetail/ProjectDetail";
 
 export const Dashboard = () => {
   const dispatch = useDispatch();
@@ -40,26 +38,7 @@ export const Dashboard = () => {
     dispatch(LogoutUser(userdata));
     navigate("/");
   };
-
-  const fetchUserData = async () => {
-    const a = [];
-    try {
-      const q = query(collection(db, "project"));
-      const doc = await getDocs(q);
-      const data = doc.docs[0].data();
-      const dataId = doc.docs[0].id;
-      doc.forEach((doc) => {
-        a.push(doc.data());
-      });
-    } catch (err) {
-      console.error(err);
-    }
-    console.log(a);
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  const userDetail = useSelector((state) => state.currentUserReducer);
 
   return (
     <>
@@ -93,47 +72,21 @@ export const Dashboard = () => {
             </div>
             <div className={styles.sidebarLine}></div>
           </div>
-          <div className={styles.sidebarProjects}>
-            <div className={styles.addProject}>
-              <p>my projects</p>
-              <img
-                src={addProject}
-                alt='noprojectimage'
-                type='button'
-                data-bs-toggle='modal'
-                data-bs-target='#exampleModal'
-              />
-              <ProjectModal />
-            </div>
-            <div className={styles.projectContent}>
-              <div className={styles.projectDetails}>
-                <p className={styles.projectIndex}></p>
-                <p className={styles.projectName}>Mobile App</p>
-              </div>
-              <div className={styles.projectDetails}>
-                <p className={styles.projectIndex}></p>
-                <p className={styles.projectName}>Website Redesign</p>
-              </div>
-              <div className={styles.projectDetails}>
-                <p className={styles.projectIndex}></p>
-                <p className={styles.projectName}>Design System</p>
-              </div>
-              <div className={styles.projectDetails}>
-                <p className={styles.projectIndex}></p>
-                <p className={styles.projectName}>Wireframes</p>
-              </div>
-            </div>
-          </div>
+          <ProjectDetail />
         </div>
         <div className={styles.maincontainerright}>
           <div className={styles.maincontainerrightHeader}>
             <div className={styles.a}>
               <div className={styles.userText}>
-                <p className={styles.userName}>Anima Agrawal</p>
-                <p className={styles.userAddress}>U.P, India</p>
+                <p className={styles.userName}>
+                  {userDetail.firstname} {userDetail.lastname}
+                </p>
+                <p className={styles.userAddress}>
+                  {userDetail.state}, {userDetail.country}
+                </p>
               </div>
               <img
-                src={profileimage}
+                src={userDetail.url}
                 alt='noprofileimage'
                 className={styles.profileimage}
               />

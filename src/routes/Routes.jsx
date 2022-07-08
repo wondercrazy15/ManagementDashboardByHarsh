@@ -6,7 +6,7 @@ import DashboardPage from "../pages/Dashboard";
 import { Routes, Route } from "react-router";
 
 const ApplicationRoutes = () => {
-  const userDetail = useSelector((state) => state);
+  const userDetail = useSelector((state) => state.currentUserReducer);
   console.log(userDetail);
   return (
     <>

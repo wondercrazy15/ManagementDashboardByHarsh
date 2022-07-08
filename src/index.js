@@ -8,13 +8,14 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
+import projectReducer from "./redux/projectDetail/projectReducer";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-// const rootReducer = combineReducers({});
+const rootReducer = combineReducers({ currentUserReducer, projectReducer });
 const store = createStore(
-  currentUserReducer,
+  rootReducer,
   composeEnhancers(applyMiddleware(thunk))
 );
 root.render(
