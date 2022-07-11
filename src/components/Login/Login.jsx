@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useForm, Controller } from "react-hook-form";
 
 const Login = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -45,6 +46,7 @@ const Login = () => {
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then(async (res) => {
         console.log(res.user);
+        navigate("/dashboard");
       })
       .catch((err) => {
         setFirebaseError(err.message);

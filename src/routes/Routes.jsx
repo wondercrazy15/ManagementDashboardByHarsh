@@ -13,10 +13,10 @@ const ApplicationRoutes = () => {
       <Routes>
         <Route path='/' element={<LoginUser />} />
         <Route path='/registration' element={<SignupUser />} />
-        {/* {userDetail.firstname && (
+        {userDetail.firstname && (
           <Route path='/dashboard' element={<DashboardPage />} />
-        )} */}
-        <Route path='/dashboard' element={<DashboardPage />} />
+        )}
+        {/* <Route path='/dashboard' element={<DashboardPage />} /> */}
       </Routes>
     </>
   );

@@ -1,6 +1,8 @@
 import { React, useEffect } from "react";
 import Input from "../../atoms/Input";
 import { useForm, Controller } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
+import { Add_Project } from "../../redux/projectDetail/projectAction";
 import {
   query,
   collection,
@@ -9,8 +11,10 @@ import {
   addDoc,
 } from "firebase/firestore/lite";
 import { auth, db } from "../../firebase/firebase";
+import { useDispatch, useSelector } from "react-redux";
 
 const ProjectCreateModal = () => {
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -29,8 +33,10 @@ const ProjectCreateModal = () => {
   const onSubmit = async (data) => {
     try {
       await addDoc(collection(db, "project"), {
+        id: uuidv4(),
         projectname: data.projectname,
       });
+      dispatch(Add_Project(data));
     } catch (error) {
       console.log(error);
     }

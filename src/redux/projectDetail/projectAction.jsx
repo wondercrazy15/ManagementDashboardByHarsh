@@ -1,4 +1,16 @@
-import { ADD_PROJECT, UPDATE_PROJECT, DELETE_PROJECT } from "./projectType";
+import {
+  FETCH_PROJECT,
+  ADD_PROJECT,
+  UPDATE_PROJECT,
+  DELETE_PROJECT,
+} from "./projectType";
+
+export function Fetch_Project(data) {
+  return {
+    type: FETCH_PROJECT,
+    payload: data,
+  };
+}
 
 export function Add_Project(data) {
   return {

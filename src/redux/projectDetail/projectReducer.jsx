@@ -1,8 +1,16 @@
-import { ADD_PROJECT, UPDATE_PROJECT, DELETE_PROJECT } from "./projectType";
+import {
+  ADD_PROJECT,
+  UPDATE_PROJECT,
+  DELETE_PROJECT,
+  FETCH_PROJECT,
+} from "./projectType";
 let initialState = [];
 
 const projectReducer = (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_PROJECT:
+      return [...state, action.payload];
+
     case ADD_PROJECT:
       return [...state, action.payload];
 

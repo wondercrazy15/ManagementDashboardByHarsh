@@ -1,10 +1,30 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import Input from "../../atoms/Input";
 import { useForm, Controller } from "react-hook-form";
-import { collection, addDoc } from "firebase/firestore/lite";
+import { useDispatch, useSelector } from "react-redux";
+import { Edit_Project } from "../../redux/projectDetail/projectAction";
 import { auth, db } from "../../firebase/firebase";
+import {
+  query,
+  collection,
+  getDocs,
+  where,
+  addDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore/lite";
+import { connectStorageEmulator } from "firebase/storage";
 
-const ProjectEditModal = () => {
+const ProjectEditModal = ({ projectId }) => {
+  const dispatch = useDispatch();
+  const projectDetail = useSelector((state) => state.projectReducer);
+  let currentProject = projectDetail.find((item) => item.id === projectId);
+
+  // let projectname;
+  // if (currentProject) {
+  //   projectname = currentProject.projectname;
+  // }
+
   const {
     register,
     handleSubmit,
@@ -21,14 +41,25 @@ const ProjectEditModal = () => {
   });
 
   const onSubmit = async (data) => {
+    data.id = projectId;
     try {
-      await addDoc(collection(db, "project"), {
+      const q = query(collection(db, "project"), where("id", "==", projectId));
+      const querySnapshot = await getDocs(q);
+      let docId;
+      querySnapshot.forEach((doc) => {
+        docId = doc.id;
+      });
+
+      const collectionRef = doc(db, "project", docId);
+      await updateDoc(collectionRef, {
         projectname: data.projectname,
       });
+      dispatch(Edit_Project(data));
     } catch (error) {
       console.log(error);
     }
   };
+  // console.log(projectDetail);
   return (
     <>
       <div

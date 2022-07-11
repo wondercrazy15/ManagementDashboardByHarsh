@@ -1,13 +1,17 @@
 import { React, useState, useEffect } from "react";
 import styles from "../Dashboard/Dashboard.module.css";
 import ProjectCreateModal from "../Modal/ProjectCreateModal";
-import { Add_Project } from "../../redux/projectDetail/projectAction";
+import ProjectDeleteModal from "../Modal/ProjectDeleteModal";
+import { Delete_Project } from "../../redux/projectDetail/projectAction";
+import { Fetch_Project } from "../../redux/projectDetail/projectAction";
 import {
   query,
   collection,
   getDocs,
   where,
   addDoc,
+  doc,
+  deleteDoc,
 } from "firebase/firestore/lite";
 import { auth, db } from "../../firebase/firebase";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,22 +20,24 @@ import editdeleteproject from "../../assets/editdeleteproject.svg";
 import addProject from "../../assets/addProject.svg";
 
 const ProjectDetail = () => {
+  const [projectId, setProjectId] = useState();
   const dispatch = useDispatch();
   const projectDetail = useSelector((state) => state.projectReducer);
-  console.log(projectDetail);
   const [isActive, setIsActive] = useState(false);
-  const handleClick = (event) => {
+
+  const handleClick = (id) => {
     setIsActive((current) => !current);
   };
+
   const fetchUserData = async () => {
-    // const projectdata = [];
+    const projectData = [];
     try {
       const q = query(collection(db, "project"));
       const doc = await getDocs(q);
-      const data = doc.docs[0].data();
-      const dataId = doc.docs[0].id;
+      // const data = doc.docs[0].data();
+      // const dataId = doc.docs[0].id;
       doc.forEach((doc) => {
-        dispatch(Add_Project(doc.data()));
+        dispatch(Fetch_Project(doc.data()));
       });
     } catch (err) {
       console.error(err);
@@ -41,6 +47,10 @@ const ProjectDetail = () => {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  const getProjectId = (id) => {
+    setProjectId(id);
+  };
 
   return (
     <>
@@ -56,67 +66,50 @@ const ProjectDetail = () => {
           />
           <ProjectCreateModal />
         </div>
-        <div className={styles.projectContent}>
-          {isActive ? (
-            <>
-              {" "}
-              <div className={styles.activeproject}>
-                <p className={styles.projectIndex}></p>
-                <p className={styles.projectName} onClick={handleClick}>
-                  Mobile App
-                </p>
-                <img
-                  src={editdeleteproject}
-                  alt='noeditdeleteproject'
-                  className='dropdown-toggle'
-                  type='button'
-                  id='dropdownMenuButton1'
-                  data-bs-toggle='dropdown'
-                  aria-expanded='false'
-                />
-                <ul
-                  className='dropdown-menu'
-                  aria-labelledby='dropdownMenuButton1'
-                >
-                  <li>
-                    <p
-                      type='button'
-                      data-bs-toggle='modal'
-                      data-bs-target='#exampleEditModal'
-                    >
-                      Edit Project
-                    </p>
-                  </li>
-                  <li>
-                    <p>Delete Project</p>
-                  </li>
-                </ul>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className={styles.projectDetails}>
-                <p className={styles.projectIndex}></p>
-                <p className={styles.projectName} onClick={handleClick}>
-                  Mobile App
-                </p>
-              </div>
-            </>
-          )}
-          <ProjectEditModal />
-          <div className={styles.projectDetails}>
-            <p className={styles.projectIndex}></p>
-            <p className={styles.projectName}>Website Redesign</p>
+        {projectDetail.map((item, index) => (
+          <div className={styles.projectContent} key={index}>
+            <div className={styles.activeproject}>
+              <p className={styles.projectIndex}></p>
+              <p className={styles.projectName}>{item.projectname}</p>
+              <img
+                src={editdeleteproject}
+                alt='noeditdeleteproject'
+                className='dropdown-toggle'
+                type='button'
+                id='dropdownMenuButton1'
+                data-bs-toggle='dropdown'
+                aria-expanded='false'
+              />
+              <ul
+                className='dropdown-menu'
+                aria-labelledby='dropdownMenuButton1'
+              >
+                <li>
+                  <p
+                    type='button'
+                    data-bs-toggle='modal'
+                    data-bs-target='#exampleEditModal'
+                    onClick={() => getProjectId(item.id)}
+                  >
+                    Edit Project
+                  </p>
+                </li>
+                <li>
+                  <p
+                    type='button'
+                    data-bs-toggle='modal'
+                    data-bs-target='#exampleDeleteModal'
+                    onClick={() => getProjectId(item.id)}
+                  >
+                    Delete Project
+                  </p>
+                </li>
+              </ul>
+              <ProjectEditModal projectId={projectId} />
+              <ProjectDeleteModal projectId={projectId} />
+            </div>
           </div>
-          <div className={styles.projectDetails}>
-            <p className={styles.projectIndex}></p>
-            <p className={styles.projectName}>Design System</p>
-          </div>
-          <div className={styles.projectDetails}>
-            <p className={styles.projectIndex}></p>
-            <p className={styles.projectName}>Wireframes</p>
-          </div>
-        </div>
+        ))}
       </div>
     </>
   );
