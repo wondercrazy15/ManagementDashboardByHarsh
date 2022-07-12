@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import styles from "../Dashboard/Dashboard.module.css";
 import ProjectCreateModal from "../Modal/ProjectCreateModal";
+import { Link } from "react-router-dom";
 import ProjectDeleteModal from "../Modal/ProjectDeleteModal";
 import { Delete_Project } from "../../redux/projectDetail/projectAction";
 import { Fetch_Project } from "../../redux/projectDetail/projectAction";
@@ -29,8 +30,7 @@ const ProjectDetail = () => {
     setIsActive((current) => !current);
   };
 
-  const fetchUserData = async () => {
-    const projectData = [];
+  const fetchProjectData = async () => {
     try {
       const q = query(collection(db, "project"));
       const doc = await getDocs(q);
@@ -45,7 +45,7 @@ const ProjectDetail = () => {
   };
 
   useEffect(() => {
-    fetchUserData();
+    fetchProjectData();
   }, []);
 
   const getProjectId = (id) => {
@@ -67,47 +67,56 @@ const ProjectDetail = () => {
           <ProjectCreateModal />
         </div>
         {projectDetail.map((item, index) => (
-          <div className={styles.projectContent} key={index}>
-            <div className={styles.activeproject}>
-              <p className={styles.projectIndex}></p>
-              <p className={styles.projectName}>{item.projectname}</p>
-              <img
-                src={editdeleteproject}
-                alt='noeditdeleteproject'
-                className='dropdown-toggle'
-                type='button'
-                id='dropdownMenuButton1'
-                data-bs-toggle='dropdown'
-                aria-expanded='false'
-              />
-              <ul
-                className='dropdown-menu'
-                aria-labelledby='dropdownMenuButton1'
-              >
-                <li>
-                  <p
-                    type='button'
-                    data-bs-toggle='modal'
-                    data-bs-target='#exampleEditModal'
-                    onClick={() => getProjectId(item.id)}
-                  >
-                    Edit Project
-                  </p>
-                </li>
-                <li>
-                  <p
-                    type='button'
-                    data-bs-toggle='modal'
-                    data-bs-target='#exampleDeleteModal'
-                    onClick={() => getProjectId(item.id)}
-                  >
-                    Delete Project
-                  </p>
-                </li>
-              </ul>
-              <ProjectEditModal projectId={projectId} />
-              <ProjectDeleteModal projectId={projectId} />
-            </div>
+          <div
+            className={styles.projectContent}
+            key={index}
+            onClick={() => getProjectId(item.id)}
+          >
+            <Link
+              to={"/dashboard/project/" + item.id}
+              className={styles.projectLink}
+            >
+              <div className={styles.activeproject}>
+                <p className={styles.projectIndex}></p>
+                <p className={styles.projectName}>{item.projectname}</p>
+                <img
+                  src={editdeleteproject}
+                  alt='noeditdeleteproject'
+                  className='dropdown-toggle'
+                  type='button'
+                  id='dropdownMenuButton1'
+                  data-bs-toggle='dropdown'
+                  aria-expanded='false'
+                />
+                <ul
+                  className='dropdown-menu'
+                  aria-labelledby='dropdownMenuButton1'
+                >
+                  <li>
+                    <p
+                      type='button'
+                      data-bs-toggle='modal'
+                      data-bs-target='#exampleEditModal'
+                      onClick={() => getProjectId(item.id)}
+                    >
+                      Edit Project
+                    </p>
+                  </li>
+                  <li>
+                    <p
+                      type='button'
+                      data-bs-toggle='modal'
+                      data-bs-target='#exampleDeleteModal'
+                      onClick={() => getProjectId(item.id)}
+                    >
+                      Delete Project
+                    </p>
+                  </li>
+                </ul>
+                <ProjectEditModal projectId={projectId} />
+                <ProjectDeleteModal projectId={projectId} />
+              </div>
+            </Link>
           </div>
         ))}
       </div>

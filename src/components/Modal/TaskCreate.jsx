@@ -1,25 +1,22 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect } from "react";
 import Input from "../../atoms/Input";
 import { useForm, Controller } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { Edit_Project } from "../../redux/projectDetail/projectAction";
-import { auth, db } from "../../firebase/firebase";
+import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import { Add_Task } from "../../redux/taskDetail/taskAction";
 import {
   query,
   collection,
   getDocs,
   where,
   addDoc,
-  updateDoc,
-  doc,
 } from "firebase/firestore/lite";
-import { connectStorageEmulator } from "firebase/storage";
+import { auth, db } from "../../firebase/firebase";
+import { useDispatch, useSelector } from "react-redux";
 
-const ProjectEditModal = ({ projectId }) => {
+const TaskCreateModal = () => {
+  const slug = useParams();
   const dispatch = useDispatch();
-  const projectDetail = useSelector((state) => state.projectReducer);
-  let currentProject = projectDetail.find((item) => item.id === projectId);
-
   const {
     register,
     handleSubmit,
@@ -31,45 +28,41 @@ const ProjectEditModal = ({ projectId }) => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      projectname: "",
+      taskpriority: "",
+      taskname: "",
+      taskdescription: "",
     },
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
-    // data.id = projectId;
-    // console.log(data);
-    // try {
-    //   const q = query(collection(db, "project"), where("id", "==", data.id));
-    //   const querySnapshot = await getDocs(q);
-    //   let docId;
-    //   querySnapshot.forEach((doc) => {
-    //     docId = doc.id;
-    //   });
-    //   const collectionRef = doc(db, "project", docId);
-    //   await updateDoc(collectionRef, {
-    //     projectname: data.projectname,
-    //   });
-    //   dispatch(Edit_Project(data));
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await addDoc(collection(db, "task"), {
+        id: uuidv4(),
+        projectId: slug.projectId,
+        taskpriority: data.taskpriority,
+        taskname: data.taskname,
+        taskdescription: data.taskdescription,
+      });
+      dispatch(Add_Task(data));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <>
       <div
         className='modal fade'
-        id='exampleEditModal'
+        id='exampleTaskModal'
         tabIndex='-1'
-        aria-labelledby='exampleEditModalLabel'
+        aria-labelledby='exampleModalLabel'
         aria-hidden='true'
       >
         <div className='modal-dialog'>
           <div className='modal-content'>
             <div className='modal-header'>
-              <h5 className='modal-title' id='exampleEditModalLabel'>
-                Edit Project
+              <h5 className='modal-title' id='exampleModalLabel'>
+                Add Task
               </h5>
               <button
                 type='button'
@@ -81,14 +74,20 @@ const ProjectEditModal = ({ projectId }) => {
             <div className='modal-body'>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Input
-                  fieldName='projectname'
+                  fieldName='taskname'
                   type='text'
                   register={register}
                   errors={errors}
-                  placeHolder='Enter ProjectName*'
+                  placeHolder='Enter TaskName*'
                   isRequired={true}
                   minimLength={3}
                 />
+                <select {...register("taskpriority")}>
+                  <option selected>Select priority</option>
+                  <option value='High'>High</option>
+                  <option value='Low'>Low</option>
+                </select>
+                <textarea {...register("taskdescription")} />
                 <button
                   type='submit'
                   className='btn btn-primary ms-3 btn-sm'
@@ -114,4 +113,4 @@ const ProjectEditModal = ({ projectId }) => {
   );
 };
 
-export default ProjectEditModal;
+export default TaskCreateModal;

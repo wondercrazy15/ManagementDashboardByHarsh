@@ -19,10 +19,11 @@ p {
   box-shadow: 0px 44px 84px 6px #d8d9db;
   border-radius: 30px;
   display: flex;
+  overflow-x: hidden;
 }
 .sidebar {
   width: 250px;
-  height: 100vh;
+  height: 900px;
   border-right: 1px solid #dbdbdb;
 }
 
@@ -122,12 +123,13 @@ p {
   font-size: 16px;
   line-height: 19px;
   color: #787486;
+  margin-right: 20px;
 }
 .sidebar .sidebarProjects .projectContent .activeproject {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 31px 230px 30px 24px;
+  margin: 31px 230px 30px 18px;
   background-color: #f1effd;
   border-radius: 30px;
   font-weight: bold;
@@ -346,4 +348,110 @@ p {
 
 .maincontainer .logout {
   cursor: pointer;
+}
+
+.tasksection .todoline {
+  width: 314px;
+  height: 0px;
+  background: #800080;
+  border: 3px solid #5030e5;
+  margin: 0px 20px 0px 20px;
+}
+
+.tasksection .task {
+  background: #ffffff;
+  border-radius: 16px;
+  margin: 28px 20px 28px 20px;
+}
+
+.tasksection .taskHeader {
+  display: flex;
+  align-items: baseline;
+}
+
+.tasksection .taskHeader .taskPriority {
+  background: rgba(223, 168, 116, 0.2);
+  border-radius: 4px;
+  margin: 20px 222px 4px 20px;
+}
+.tasksection .taskHeader .taskPriority .taskpriorityText {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #d58d49;
+  padding: 4px;
+}
+
+.tasksection .taskName {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #0d062d;
+  margin-left: 20px;
+}
+
+.tasksection .taskDescription {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #787486;
+  margin-left: 20px;
+  margin-top: 6px;
+}
+
+.tasksection .taskFooter {
+  display: flex;
+  align-items: center;
+  margin-top: 48px;
+  padding-bottom: 9px;
+}
+
+.tasksection .taskFooter .userImage {
+  width: 63px;
+  height: 24px;
+  margin-left: 20px;
+}
+
+.tasksection .taskFooter .comments {
+  display: flex;
+  margin-left: 48px;
+}
+
+.tasksection .taskFooter .files {
+  display: flex;
+  margin-left: 15px;
+}
+
+.tasksection .taskFooter .comments .commentsImage {
+  height: 15px;
+  width: 15px;
+}
+
+.tasksection .taskFooter .files .filesImage {
+  height: 15px;
+  width: 15px;
+}
+
+.tasksection .taskFooter .comments .commentsText {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #787486;
+  margin-left: 6px;
+}
+
+.tasksection .taskFooter .files .filesText {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #787486;
+  margin-left: 5px;
+}
+
+.homeLink {
+  text-decoration: none;
+}
+
+.projectLink {
+  text-decoration: none;
 }

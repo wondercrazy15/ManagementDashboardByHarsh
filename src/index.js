@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import taskReducer from "./redux/taskDetail/taskReducer";
 import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import currentUserReducer from "./redux/currentUser/currentUserReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -13,7 +14,11 @@ import projectReducer from "./redux/projectDetail/projectReducer";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const rootReducer = combineReducers({ currentUserReducer, projectReducer });
+const rootReducer = combineReducers({
+  currentUserReducer,
+  projectReducer,
+  taskReducer,
+});
 const store = createStore(
   rootReducer,
   composeEnhancers(applyMiddleware(thunk))
