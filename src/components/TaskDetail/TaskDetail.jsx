@@ -1,6 +1,8 @@
 import { React, useEffect } from "react";
 import styles from "../Dashboard/Dashboard.module.css";
 import downarrow from "../../assets/downarrow.svg";
+import TaskEditModal from "../Modal/TaskEdit";
+import TaskDeleteModal from "../Modal/TaskDelete";
 import TaskCreateModal from "../Modal/TaskCreate";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -25,8 +27,11 @@ import {
 } from "firebase/firestore/lite";
 import { auth, db } from "../../firebase/firebase";
 import { Fetch_Task } from "../../redux/taskDetail/taskAction";
+import { useState } from "react";
 
 const TaskDetail = () => {
+  const [taskId, setTaskId] = useState();
+  const [onProgressData, setOnProgressData] = useState([]);
   const dispatch = useDispatch();
   const taskDetail = useSelector((state) => state.taskReducer);
   const slug = useParams();
@@ -53,10 +58,38 @@ const TaskDetail = () => {
     fetchTaskData();
   }, []);
 
-  const taskData = taskDetail.filter(
-    (item) => item.projectId === slug.projectId
-  );
-  console.log(taskData);
+  const [taskData, setTaskData] = useState([]);
+
+  useEffect(() => {
+    let taskdata = taskDetail.filter(
+      (item) => item.projectId === slug.projectId
+    );
+    setTaskData(taskdata);
+  }, [taskDetail, slug]);
+
+  const getProjectId = (id) => {
+    setTaskId(id);
+  };
+
+  const dragStarted = (e, id) => {
+    console.log("Drag has started");
+    e.dataTransfer.setData("taskId", id);
+  };
+
+  const draggingOver = (e) => {
+    e.preventDefault();
+    console.log("Dragging over now");
+  };
+
+  const dragDropped = (e) => {
+    console.log("you have dropped");
+    let transferedTaskId = e.dataTransfer.getData("taskId");
+    const data = taskData.filter((item) => item.id === transferedTaskId);
+    setOnProgressData((current) => [...current, data[0]]);
+    const tData = taskData.filter((item) => item.id !== transferedTaskId);
+    setTaskData(tData);
+  };
+
   return (
     <>
       <div className={styles.projectnameandinvite}>
@@ -121,46 +154,183 @@ const TaskDetail = () => {
           </div>
           <p className={styles.todoline}></p>
           {taskData.length > 0 ? (
-            <div className={styles.task}>
-              <div className={styles.taskHeader}>
-                <div className={styles.taskPriority}>
-                  <p className={styles.taskpriorityText}>Low</p>
-                </div>
-                <img src={editdeleteproject} alt='noeditdeletetask' />
-              </div>
-              <div className={styles.taskName}>Brainstorming</div>
-              <div className={styles.taskDescription}>
-                Brainstorming brings team members' diverse experience into play.
-              </div>
-              <div className={styles.taskFooter}>
-                <img
-                  src={user}
-                  alt='nouserImage'
-                  className={styles.userImage}
-                />
-                <div className={styles.comments}>
+            taskData.map((item, index) => (
+              <div
+                className={styles.task}
+                key={index}
+                onDragStart={(e) => dragStarted(e, item.id)}
+                draggable
+              >
+                <div className={styles.taskHeader}>
+                  <div className={styles.taskPriority}>
+                    <p className={styles.taskpriorityText}>
+                      {item.taskpriority}
+                    </p>
+                  </div>
                   <img
-                    src={comments}
-                    alt='nocommentsImage'
-                    className={styles.commentsImage}
+                    src={editdeleteproject}
+                    alt='noeditdeletetask'
+                    className='dropdown-toggle'
+                    type='button'
+                    id='dropdownMenuButton1'
+                    data-bs-toggle='dropdown'
+                    aria-expanded='false'
                   />
-                  <p className={styles.commentsText}>12 comments</p>
+                  <ul
+                    className='dropdown-menu'
+                    aria-labelledby='dropdownMenuButton1'
+                  >
+                    <li>
+                      <p
+                        type='button'
+                        data-bs-toggle='modal'
+                        data-bs-target='#exampleTaskEditModal'
+                        onClick={() => getProjectId(item.id)}
+                      >
+                        Edit Task
+                      </p>
+                    </li>
+                    <li>
+                      <p
+                        type='button'
+                        data-bs-toggle='modal'
+                        data-bs-target='#exampleDeleteTaskModal'
+                        onClick={() => getProjectId(item.id)}
+                      >
+                        Delete Task
+                      </p>
+                    </li>
+                  </ul>
+                  <TaskDeleteModal taskId={taskId} />
+                  <TaskEditModal taskId={taskId} />
                 </div>
-                <div className={styles.files}>
+                <div className={styles.taskName}>{item.taskname}</div>
+                <div className={styles.taskDescription}>
+                  {item.taskdescription}
+                </div>
+                <div className={styles.taskFooter}>
                   <img
-                    src={files}
-                    alt='nofilesImage'
-                    className={styles.filesImage}
+                    src={user}
+                    alt='nouserImage'
+                    className={styles.userImage}
                   />
-                  <p className={styles.filesText}>0 files</p>
+                  <div className={styles.comments}>
+                    <img
+                      src={comments}
+                      alt='nocommentsImage'
+                      className={styles.commentsImage}
+                    />
+                    <p className={styles.commentsText}>12 comments</p>
+                  </div>
+                  <div className={styles.files}>
+                    <img
+                      src={files}
+                      alt='nofilesImage'
+                      className={styles.filesImage}
+                    />
+                    <p className={styles.filesText}>0 files</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))
           ) : (
             <div className={styles.task}>No Task Available</div>
           )}
         </div>
-        <div className={styles.onprogresssection}></div>
+        <div
+          className={styles.onprogresssection}
+          droppable='true'
+          onDragOver={(e) => draggingOver(e)}
+          onDrop={(e) => dragDropped(e)}
+        >
+          <div className={styles.onprogressHeader}>
+            <p className={styles.onprogressdot}></p>
+            <p className={styles.onprogresstext}>On Progress</p>
+            <p className={styles.onprogresslength}>{onProgressData.length}</p>
+          </div>
+          <p className={styles.onprogressline}></p>
+          {onProgressData.length > 0 ? (
+            onProgressData.map((item, index) => (
+              <div
+                className={styles.task}
+                key={index}
+                onDragStart={(e) => dragStarted(e, item.id)}
+                draggable
+              >
+                <div className={styles.taskHeader}>
+                  <div className={styles.taskPriority}>
+                    <p className={styles.taskpriorityText}>
+                      {item.taskpriority}
+                    </p>
+                  </div>
+                  <img
+                    src={editdeleteproject}
+                    alt='noeditdeletetask'
+                    className='dropdown-toggle'
+                    type='button'
+                    id='dropdownMenuButton1'
+                    data-bs-toggle='dropdown'
+                    aria-expanded='false'
+                  />
+                  <ul
+                    className='dropdown-menu'
+                    aria-labelledby='dropdownMenuButton1'
+                  >
+                    <li>
+                      <p
+                        type='button'
+                        data-bs-toggle='modal'
+                        data-bs-target='#exampleEditModal'
+                      >
+                        Edit Task
+                      </p>
+                    </li>
+                    <li>
+                      <p
+                        type='button'
+                        data-bs-toggle='modal'
+                        data-bs-target='#exampleDeleteTaskModal'
+                        onClick={() => getProjectId(item.id)}
+                      >
+                        Delete Task
+                      </p>
+                    </li>
+                  </ul>
+                  <TaskDeleteModal taskId={taskId} />
+                </div>
+                <div className={styles.taskName}>{item.taskname}</div>
+                <div className={styles.taskDescription}>
+                  {item.taskdescription}
+                </div>
+                <div className={styles.taskFooter}>
+                  <img
+                    src={user}
+                    alt='nouserImage'
+                    className={styles.userImage}
+                  />
+                  <div className={styles.comments}>
+                    <img
+                      src={comments}
+                      alt='nocommentsImage'
+                      className={styles.commentsImage}
+                    />
+                    <p className={styles.commentsText}>12 comments</p>
+                  </div>
+                  <div className={styles.files}>
+                    <img
+                      src={files}
+                      alt='nofilesImage'
+                      className={styles.filesImage}
+                    />
+                    <p className={styles.filesText}>0 files</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className={styles.task}>No Task Available</div>
+          )}
+        </div>
         <div className={styles.donesection}></div>
       </div>
     </>

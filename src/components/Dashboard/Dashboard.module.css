@@ -304,7 +304,10 @@ p {
   margin-left: 12px;
   opacity: 0.8;
 }
-
+.tasksection {
+  display: flex;
+  cursor: pointer;
+}
 .maincontainerright .tasksection .todosection {
   background: #f5f5f5;
   border-radius: 16px 16px 0px 0px;
@@ -454,4 +457,46 @@ p {
 
 .projectLink {
   text-decoration: none;
+}
+.onprogresssection {
+  margin-left: 15px;
+  background: #f5f5f5;
+  border-radius: 16px 16px 0px 0px;
+  width: 354px;
+}
+
+.onprogressHeader {
+  display: flex;
+  align-items: center;
+  padding: 28px 140px 24px 20px;
+}
+
+.onprogressdot {
+  height: 8px;
+  width: 8px;
+  background: #ffa500;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.onprogresstext {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #0d062d;
+  margin-right: 18px;
+}
+
+.onprogresslength {
+  background: #e0e0e0;
+  border-radius: 70%;
+  padding: 3px 7px 3px 5px;
+}
+
+.onprogressline {
+  width: 314px;
+  height: 0px;
+  background: #800080;
+  border: 3px solid #ffa500;
+  margin: 0px 20px 0px 20px;
 }

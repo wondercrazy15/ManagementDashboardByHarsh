@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 const TaskCreateModal = () => {
   const slug = useParams();
   const dispatch = useDispatch();
+  const taskDetail = useSelector((state) => state.taskReducer);
+
   const {
     register,
     handleSubmit,
@@ -24,6 +26,7 @@ const TaskCreateModal = () => {
     formState,
     reset,
     control,
+    isSubmitSuccessful,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -35,6 +38,7 @@ const TaskCreateModal = () => {
   });
 
   const onSubmit = async (data) => {
+    data.projectId = slug.projectId;
     try {
       await addDoc(collection(db, "task"), {
         id: uuidv4(),
@@ -44,6 +48,11 @@ const TaskCreateModal = () => {
         taskdescription: data.taskdescription,
       });
       dispatch(Add_Task(data));
+      reset({
+        taskpriority: "",
+        taskname: "",
+        taskdescription: "",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -81,16 +90,22 @@ const TaskCreateModal = () => {
                   placeHolder='Enter TaskName*'
                   isRequired={true}
                   minimLength={3}
+                  className='w-75'
                 />
-                <select {...register("taskpriority")}>
-                  <option selected>Select priority</option>
+                <select
+                  {...register("taskpriority")}
+                  className='d-block my-3 w-50'
+                >
+                  <option selected value=''>
+                    Select priority
+                  </option>
                   <option value='High'>High</option>
                   <option value='Low'>Low</option>
                 </select>
-                <textarea {...register("taskdescription")} />
+                <textarea {...register("taskdescription")} className='w-50' />
                 <button
                   type='submit'
-                  className='btn btn-primary ms-3 btn-sm'
+                  className='btn btn-primary ms-3 btn-sm d-block'
                   data-bs-dismiss='modal'
                 >
                   submit
