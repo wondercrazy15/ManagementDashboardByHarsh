@@ -254,6 +254,8 @@ p {
 .maincontainerright .filtersection {
   display: flex;
   margin: 0px 0px 42px 48px;
+  cursor: pointer;
+  position: relative;
 }
 
 .maincontainerright .filtersection .filter {
@@ -313,6 +315,7 @@ p {
   border-radius: 16px 16px 0px 0px;
   width: 354px;
   margin-left: 48px;
+  min-height: 700px;
 }
 
 .maincontainerright .tasksection .todosection .todoHeader {
@@ -499,4 +502,31 @@ p {
   background: #800080;
   border: 3px solid #ffa500;
   margin: 0px 20px 0px 20px;
+}
+
+.doneline {
+  width: 314px;
+  height: 0px;
+  background: #800080;
+  border: 3px solid #8bc48a;
+  margin: 0px 20px 0px 20px;
+}
+.donesection {
+  margin-left: 15px;
+  background: #f5f5f5;
+  border-radius: 16px 16px 0px 0px;
+  width: 354px;
+}
+
+.dragtask {
+  background-color: black;
+}
+
+/* .none {
+  display: none;
+  opacity: 1;
+} */
+
+.dropdown-toggle::after {
+  display: none !important;
 }

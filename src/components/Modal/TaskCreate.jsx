@@ -38,14 +38,20 @@ const TaskCreateModal = () => {
   });
 
   const onSubmit = async (data) => {
+    const id = uuidv4();
+    data.id = id;
     data.projectId = slug.projectId;
+    data.status = "Todo";
+    data.createdDate = new Date();
     try {
       await addDoc(collection(db, "task"), {
-        id: uuidv4(),
+        id: id,
         projectId: slug.projectId,
         taskpriority: data.taskpriority,
         taskname: data.taskname,
         taskdescription: data.taskdescription,
+        status: "Todo",
+        createdDate: new Date(),
       });
       dispatch(Add_Task(data));
       reset({

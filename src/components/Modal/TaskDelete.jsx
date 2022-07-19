@@ -13,7 +13,6 @@ import { Delete_Task } from "../../redux/taskDetail/taskAction";
 import { useDispatch, useSelector } from "react-redux";
 
 const TaskDeleteModal = ({ taskId }) => {
-  console.log(taskId);
   const dispatch = useDispatch();
   const deleteTask = async (id) => {
     try {

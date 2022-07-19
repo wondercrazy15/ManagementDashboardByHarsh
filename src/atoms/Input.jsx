@@ -10,11 +10,13 @@ const Input = ({
   minimLength,
   type,
   patternn,
+  defaultValue,
 }) => {
   return (
     <>
       <input
         type={type}
+        defaultValue={defaultValue}
         placeholder={placeHolder}
         {...register(fieldName, {
           required: {

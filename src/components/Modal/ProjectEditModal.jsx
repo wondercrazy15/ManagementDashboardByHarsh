@@ -30,37 +30,32 @@ const ProjectEditModal = ({ projectId }) => {
     formState: { errors },
   } = useForm({
     mode: "onChange",
-    defaultValues: {
-      projectname: "",
-    },
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
-    // data.id = projectId;
-    // console.log(data);
-    // try {
-    //   const q = query(collection(db, "project"), where("id", "==", data.id));
-    //   const querySnapshot = await getDocs(q);
-    //   let docId;
-    //   querySnapshot.forEach((doc) => {
-    //     docId = doc.id;
-    //   });
-    //   const collectionRef = doc(db, "project", docId);
-    //   await updateDoc(collectionRef, {
-    //     projectname: data.projectname,
-    //   });
-    //   dispatch(Edit_Project(data));
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    data.id = projectId;
+    try {
+      const q = query(collection(db, "project"), where("id", "==", data.id));
+      const querySnapshot = await getDocs(q);
+      let docId;
+      querySnapshot.forEach((doc) => {
+        docId = doc.id;
+      });
+      const collectionRef = doc(db, "project", docId);
+      await updateDoc(collectionRef, {
+        projectname: data.projectname,
+      });
+      dispatch(Edit_Project(data));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <>
       <div
         className='modal fade'
-        id='exampleEditModal'
+        id='exampleEditProjectModal'
         tabIndex='-1'
         aria-labelledby='exampleEditModalLabel'
         aria-hidden='true'
@@ -88,6 +83,7 @@ const ProjectEditModal = ({ projectId }) => {
                   placeHolder='Enter ProjectName*'
                   isRequired={true}
                   minimLength={3}
+                  defaultValue={currentProject?.projectname}
                 />
                 <button
                   type='submit'

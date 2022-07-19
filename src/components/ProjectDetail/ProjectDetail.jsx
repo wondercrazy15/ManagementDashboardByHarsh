@@ -96,7 +96,7 @@ const ProjectDetail = () => {
                     <p
                       type='button'
                       data-bs-toggle='modal'
-                      data-bs-target='#exampleEditModal'
+                      data-bs-target='#exampleEditProjectModal'
                       onClick={() => getProjectId(item.id)}
                     >
                       Edit Project
@@ -113,12 +113,13 @@ const ProjectDetail = () => {
                     </p>
                   </li>
                 </ul>
-                <ProjectEditModal projectId={projectId} />
+
                 <ProjectDeleteModal projectId={projectId} />
               </div>
             </Link>
           </div>
         ))}
+        <ProjectEditModal projectId={projectId} />
       </div>
     </>
   );
