@@ -12,17 +12,33 @@ import {
 import { Delete_Task } from "../../redux/taskDetail/taskAction";
 import { useDispatch, useSelector } from "react-redux";
 
-const TaskDeleteModal = ({ taskId }) => {
+const TaskDeleteModal = ({ taskId, docID }) => {
   const dispatch = useDispatch();
+  const [docId, setDocId] = useState();
+
+  const fetchTaskData = async () => {
+    try {
+      const q = query(
+        collection(db, "project", `${docID}`, "task"),
+        where("id", "==", taskId)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setDocId(doc.id);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTaskData();
+  }, [docID, taskId]);
+
   const deleteTask = async (id) => {
     try {
-      const q = query(collection(db, "task"), where("id", "==", id));
-      const querySnapshot = await getDocs(q);
-      let docId;
-      querySnapshot.forEach((doc) => {
-        docId = doc.id;
-      });
-      await deleteDoc(doc(db, "task", docId));
+      const colRef = doc(db, `project/${docID}/task/${docId}`);
+      await deleteDoc(colRef);
 
       dispatch(Delete_Task(id));
     } catch (error) {

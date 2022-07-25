@@ -9,7 +9,18 @@ let initialState = [];
 const projectReducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_PROJECT:
-      return [...state, action.payload];
+      const updatState = [...state, action.payload];
+      const uData = [];
+
+      const uniqueData = updatState.filter((element) => {
+        const isDuplicate = uData.includes(element.id);
+        if (!isDuplicate) {
+          uData.push(element.id);
+          return true;
+        }
+        return false;
+      });
+      return uniqueData;
 
     case ADD_PROJECT:
       return [...state, action.payload];

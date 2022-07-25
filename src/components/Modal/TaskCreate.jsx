@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import Input from "../../atoms/Input";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -10,11 +10,12 @@ import {
   getDocs,
   where,
   addDoc,
+  doc,
 } from "firebase/firestore/lite";
 import { auth, db } from "../../firebase/firebase";
 import { useDispatch, useSelector } from "react-redux";
 
-const TaskCreateModal = () => {
+const TaskCreateModal = ({ docId }) => {
   const slug = useParams();
   const dispatch = useDispatch();
   const taskDetail = useSelector((state) => state.taskReducer);
@@ -44,7 +45,9 @@ const TaskCreateModal = () => {
     data.status = "Todo";
     data.createdDate = new Date();
     try {
-      await addDoc(collection(db, "task"), {
+      const docRef = doc(db, "project", docId);
+      const colRef = collection(docRef, "task");
+      await addDoc(colRef, {
         id: id,
         projectId: slug.projectId,
         taskpriority: data.taskpriority,
@@ -53,6 +56,7 @@ const TaskCreateModal = () => {
         status: "Todo",
         createdDate: new Date(),
       });
+
       dispatch(Add_Task(data));
       reset({
         taskpriority: "",
@@ -60,7 +64,7 @@ const TaskCreateModal = () => {
         taskdescription: "",
       });
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   };
 

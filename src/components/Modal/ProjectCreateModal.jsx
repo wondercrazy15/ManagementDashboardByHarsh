@@ -31,9 +31,11 @@ const ProjectCreateModal = () => {
   });
 
   const onSubmit = async (data) => {
+    const id = uuidv4();
+    data.id = id;
     try {
       await addDoc(collection(db, "project"), {
-        id: uuidv4(),
+        id: id,
         projectname: data.projectname,
       });
       dispatch(Add_Project(data));

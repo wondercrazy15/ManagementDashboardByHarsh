@@ -28,6 +28,7 @@ import {
   updateDoc,
   doc,
   deleteDoc,
+  collectionGroup,
 } from "firebase/firestore/lite";
 import { auth, db } from "../../firebase/firebase";
 import { Fetch_Task } from "../../redux/taskDetail/taskAction";
@@ -35,20 +36,33 @@ import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const TaskDetail = () => {
+  const [docId, setDocId] = useState();
+  const [taskDocId, setTaskDocId] = useState();
   const [priority, setPriority] = useState("");
   const [date, setDate] = useState();
   const [month, setMonth] = useState();
+  const [monthText, setMonthText] = useState();
   const [day, setDay] = useState();
   const [year, setYear] = useState();
   const [showCalendar, setCalendar] = useState(false);
   const onDateChange = (date) => {
     setDate(date);
   };
+  function toMonthName(monthNumber) {
+    if (date) {
+      setMonthText(
+        date.toLocaleString("en-US", {
+          month: "long",
+        })
+      );
+    }
+  }
   useEffect(() => {
     if (date) {
       setMonth(date.getUTCMonth() + 1);
       setYear(date.getUTCFullYear());
       setDay(date.getUTCDate() + 1);
+      toMonthName(month);
     }
   }, [date]);
 
@@ -64,12 +78,29 @@ const TaskDetail = () => {
     (item) => item.id === slug.projectId
   );
 
+  const fetchProjectData = async () => {
+    try {
+      const q = query(
+        collection(db, "project"),
+        where("id", "==", slug?.projectId)
+      );
+      const doc = await getDocs(q);
+      doc.forEach((doc) => {
+        setDocId(doc.id);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjectData();
+  }, [slug?.projectId]);
+
   const fetchTaskData = async () => {
     try {
-      const q = query(collection(db, "task"));
+      const q = query(collection(db, "project", `${docId}`, "task"));
       const doc = await getDocs(q);
-      // const data = doc.docs[0].data();
-      // const dataId = doc.docs[0].id;
       doc.forEach((doc) => {
         dispatch(Fetch_Task(doc.data()));
       });
@@ -80,44 +111,9 @@ const TaskDetail = () => {
 
   useEffect(() => {
     fetchTaskData();
-  }, []);
+  }, [docId]);
 
   const [taskData, setTaskData] = useState([]);
-
-  useEffect(() => {
-    let taskdata = taskDetail.filter(
-      (item) => item.projectId === slug.projectId
-    );
-    setTaskData(taskdata);
-  }, [taskDetail, slug]);
-
-  const getProjectId = (id) => {
-    setTaskId(id);
-  };
-
-  useEffect(() => {
-    if (priority === "High") {
-      setTaskData(() =>
-        taskData.filter((item) => item.taskpriority === "High")
-      );
-    }
-    if (priority === "Low") {
-      setTaskData(() => taskData.filter((item) => item.taskpriority === "Low"));
-    }
-    // if (date) {
-    //   setTaskData(() =>
-    //     taskData.filter(
-    //       (item) =>
-    //         item.createdDate.toDate().getUTCMonth() + 1 ===
-    //         date.getUTCMonth() + 1
-
-    //       //   &&
-    //       // item.createdDate.toDate().getUTCDate() === date.getUTCDate() &&
-    //       // item.createdDate.toDate().getUTCFullYear() === date.getUTCFullYear()
-    //     )
-    //   );
-    // }
-  }, [taskData, date]);
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
@@ -136,14 +132,17 @@ const TaskDetail = () => {
     if (destination.droppableId === "Todo") {
       const data = taskData.find((item) => item.id === draggableId);
       data.status = "Todo";
-      const q = query(collection(db, "task"), where("id", "==", draggableId));
+      const q = query(
+        collection(db, "project", `${docId}`, "task"),
+        where("id", "==", draggableId)
+      );
+      let id;
       const querySnapshot = await getDocs(q);
-      let docId;
       querySnapshot.forEach((doc) => {
-        docId = doc.id;
+        id = doc.id;
       });
-      const collectionRef = doc(db, "task", docId);
-      await updateDoc(collectionRef, {
+      const colRef = doc(db, `project/${docId}/task/${id}`);
+      await updateDoc(colRef, {
         status: "Todo",
         taskname: data.taskname,
         taskdescription: data.taskdescription,
@@ -154,14 +153,17 @@ const TaskDetail = () => {
     if (destination.droppableId === "onProgress") {
       const data = taskData.find((item) => item.id === draggableId);
       data.status = "onProgress";
-      const q = query(collection(db, "task"), where("id", "==", draggableId));
+      const q = query(
+        collection(db, "project", `${docId}`, "task"),
+        where("id", "==", draggableId)
+      );
+      let id;
       const querySnapshot = await getDocs(q);
-      let docId;
       querySnapshot.forEach((doc) => {
-        docId = doc.id;
+        id = doc.id;
       });
-      const collectionRef = doc(db, "task", docId);
-      await updateDoc(collectionRef, {
+      const colRef = doc(db, `project/${docId}/task/${id}`);
+      await updateDoc(colRef, {
         status: "onProgress",
         taskname: data.taskname,
         taskdescription: data.taskdescription,
@@ -172,14 +174,17 @@ const TaskDetail = () => {
     if (destination.droppableId === "done") {
       const data = taskData.find((item) => item.id === draggableId);
       data.status = "done";
-      const q = query(collection(db, "task"), where("id", "==", draggableId));
+      const q = query(
+        collection(db, "project", `${docId}`, "task"),
+        where("id", "==", draggableId)
+      );
+      let id;
       const querySnapshot = await getDocs(q);
-      let docId;
       querySnapshot.forEach((doc) => {
-        docId = doc.id;
+        id = doc.id;
       });
-      const collectionRef = doc(db, "task", docId);
-      await updateDoc(collectionRef, {
+      const colRef = doc(db, `project/${docId}/task/${id}`);
+      await updateDoc(colRef, {
         status: "done",
         taskname: data.taskname,
         taskdescription: data.taskdescription,
@@ -189,58 +194,152 @@ const TaskDetail = () => {
     }
   };
 
+  const getProjectId = (id) => {
+    setTaskId(id);
+  };
+
+  useEffect(() => {
+    let taskdata = taskDetail.filter(
+      (item) => item.projectId === slug.projectId
+    );
+    setTaskData(taskdata);
+  }, [taskDetail, slug]);
+
   useEffect(() => {
     if (taskData) {
       const onpData = taskData.filter((item) => item.status === "onProgress");
       setOnProgressData(onpData);
     }
-    if (month) {
-      const onpData = taskData.filter((item) => {
-        if (item.status === "onProgress") {
-          return (
-            item.createdDate.toDate().getUTCMonth() + 1 === month &&
-            item.createdDate.toDate().getUTCDate() === day &&
-            item.createdDate.toDate().getUTCFullYear() === year
-          );
-        }
-      });
-      setOnProgressData(onpData);
+    if (month || priority) {
+      if (month) {
+        const onpData = taskData.filter((item) => {
+          if (item.status === "onProgress") {
+            return (
+              item.createdDate.toDate().getUTCMonth() + 1 === month &&
+              item.createdDate.toDate().getUTCDate() === day &&
+              item.createdDate.toDate().getUTCFullYear() === year
+            );
+          }
+        });
+        setOnProgressData(onpData);
+      }
+      if (priority) {
+        setOnProgressData(() =>
+          taskData.filter((item) => {
+            if (item.status === "onProgress") {
+              return item.taskpriority === priority;
+            }
+          })
+        );
+      }
     }
-  }, [taskData, month, day, year]);
+    if (month && priority) {
+      setOnProgressData(() =>
+        taskData.filter((item) => {
+          if (item.status === "onProgress") {
+            return (
+              item.taskpriority === priority &&
+              item.createdDate.toDate().getUTCMonth() + 1 === month &&
+              item.createdDate.toDate().getUTCDate() === day &&
+              item.createdDate.toDate().getUTCFullYear() === year
+            );
+          }
+        })
+      );
+    }
+  }, [taskData, month, day, year, priority]);
 
   useEffect(() => {
     const ontData = taskData.filter((item) => item.status === "Todo");
     setOnTodoData(ontData);
-    if (month) {
-      const onpData = taskData.filter((item) => {
-        if (item.status === "Todo") {
-          return (
-            item.createdDate.toDate().getUTCMonth() + 1 === month &&
-            item.createdDate.toDate().getUTCDate() === day &&
-            item.createdDate.toDate().getUTCFullYear() === year
-          );
-        }
-      });
-      setOnTodoData(onpData);
+    if (month || priority) {
+      if (month) {
+        const onpData = taskData.filter((item) => {
+          if (item.status === "Todo") {
+            return (
+              item.createdDate.toDate().getUTCMonth() + 1 === month &&
+              item.createdDate.toDate().getUTCDate() === day &&
+              item.createdDate.toDate().getUTCFullYear() === year
+            );
+          }
+        });
+        setOnTodoData(onpData);
+      }
+      if (priority) {
+        setOnTodoData(() =>
+          taskData.filter((item) => {
+            if (item.status === "Todo") {
+              return item.taskpriority === priority;
+            }
+          })
+        );
+      }
     }
-  }, [taskData, month, day, year]);
+    if (month && priority) {
+      setOnTodoData(() =>
+        taskData.filter((item) => {
+          if (item.status === "Todo") {
+            return (
+              item.taskpriority === priority &&
+              item.createdDate.toDate().getUTCMonth() + 1 === month &&
+              item.createdDate.toDate().getUTCDate() === day &&
+              item.createdDate.toDate().getUTCFullYear() === year
+            );
+          }
+        })
+      );
+    }
+  }, [taskData, month, day, year, priority]);
 
   useEffect(() => {
     const doneData = taskData.filter((item) => item.status === "done");
     setDoneData(doneData);
-    if (month) {
-      const onpData = taskData.filter((item) => {
-        if (item.status === "done") {
-          return (
-            item.createdDate.toDate().getUTCMonth() + 1 === month &&
-            item.createdDate.toDate().getUTCDate() === day &&
-            item.createdDate.toDate().getUTCFullYear() === year
-          );
-        }
-      });
-      setDoneData(onpData);
+    if (month || priority) {
+      if (month) {
+        const onpData = taskData.filter((item) => {
+          if (item.status === "done") {
+            return (
+              item.createdDate.toDate().getUTCMonth() + 1 === month &&
+              item.createdDate.toDate().getUTCDate() === day &&
+              item.createdDate.toDate().getUTCFullYear() === year
+            );
+          }
+        });
+        setDoneData(onpData);
+      }
+      if (priority) {
+        setDoneData(() =>
+          taskData.filter((item) => {
+            if (item.status === "done") {
+              return item.taskpriority === priority;
+            }
+          })
+        );
+      }
     }
-  }, [taskData, month, day, year]);
+    if (month && priority) {
+      setDoneData(() =>
+        taskData.filter((item) => {
+          if (item.status === "done") {
+            return (
+              item.taskpriority === priority &&
+              item.createdDate.toDate().getUTCMonth() + 1 === month &&
+              item.createdDate.toDate().getUTCDate() === day &&
+              item.createdDate.toDate().getUTCFullYear() === year
+            );
+          }
+        })
+      );
+    }
+  }, [taskData, month, day, year, priority]);
+
+  const removeFilter = () => {
+    setDate();
+    setMonth();
+    setYear();
+    setDay();
+    setPriority("");
+  };
 
   return (
     <>
@@ -324,6 +423,44 @@ const TaskDetail = () => {
             <Calendar onChange={onDateChange} value={date} />
           </div>
         )}
+
+        {(date || priority) && (
+          <p className={styles.filterText}>
+            {date && priority ? (
+              <span>
+                you have selected tasks which created at date:
+                <span
+                  className={styles.filtertext}
+                >{`${day} ${monthText} ${year}`}</span>
+                and whose priority is:
+                <span className={styles.filtertext}>{priority}</span>
+              </span>
+            ) : (
+              <>
+                {date ? (
+                  <span>
+                    you have selected tasks which created at date:
+                    <span
+                      className={styles.filtertext}
+                    >{`${day} ${monthText} ${year}`}</span>
+                  </span>
+                ) : (
+                  <span>
+                    you have selected tasks whose priority is:
+                    <span className={styles.filtertext}>{priority}</span>
+                  </span>
+                )}
+              </>
+            )}
+
+            <i
+              className='fa-solid fa-xmark'
+              type='button'
+              onClick={removeFilter}
+            ></i>
+          </p>
+        )}
+
         <div className={styles.tasksection}>
           <Droppable droppableId='Todo'>
             {(provided) => (
@@ -344,7 +481,7 @@ const TaskDetail = () => {
                     data-bs-toggle='modal'
                     data-bs-target='#exampleTaskModal'
                   />
-                  <TaskCreateModal />
+                  <TaskCreateModal docId={docId} />
                 </div>
                 <p className={styles.todoline}></p>
                 {onTodoData.length > 0 ? (
@@ -401,8 +538,8 @@ const TaskDetail = () => {
                                 </p>
                               </li>
                             </ul>
-                            <TaskDeleteModal taskId={taskId} />
-                            <TaskEditModal taskId={taskId} />
+                            <TaskDeleteModal taskId={taskId} docID={docId} />
+                            <TaskEditModal taskId={taskId} docID={docId} />
                           </div>
                           <div className={styles.taskName}>{item.taskname}</div>
                           <div className={styles.taskDescription}>
@@ -474,15 +611,17 @@ const TaskDetail = () => {
                                 {item.taskpriority}
                               </p>
                             </div>
-                            <img
-                              src={editdeleteproject}
-                              alt='noeditdeletetask'
-                              className='dropdown-toggle'
+                            <div
                               type='button'
                               id='dropdownMenuButton1'
                               data-bs-toggle='dropdown'
                               aria-expanded='false'
-                            />
+                            >
+                              <img
+                                src={editdeleteproject}
+                                alt='noeditdeletetask'
+                              />
+                            </div>
                             <ul
                               className='dropdown-menu'
                               aria-labelledby='dropdownMenuButton1'
@@ -577,15 +716,17 @@ const TaskDetail = () => {
                                 {item.taskpriority}
                               </p>
                             </div>
-                            <img
-                              src={editdeleteproject}
-                              alt='noeditdeletetask'
-                              className='dropdown-toggle'
+                            <div
                               type='button'
                               id='dropdownMenuButton1'
                               data-bs-toggle='dropdown'
                               aria-expanded='false'
-                            />
+                            >
+                              <img
+                                src={editdeleteproject}
+                                alt='noeditdeletetask'
+                              />
+                            </div>
                             <ul
                               className='dropdown-menu'
                               aria-labelledby='dropdownMenuButton1'

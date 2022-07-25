@@ -17,7 +17,7 @@ import {
 import { auth, db } from "../../firebase/firebase";
 import { useDispatch, useSelector } from "react-redux";
 
-const TaskEditModal = ({ taskId }) => {
+const TaskEditModal = ({ taskId, docID }) => {
   const slug = useParams();
   const dispatch = useDispatch();
   const taskDetail = useSelector((state) => state.taskReducer);
@@ -35,20 +35,36 @@ const TaskEditModal = ({ taskId }) => {
   } = useForm({
     mode: "onChange",
   });
+  const [docId, setDocId] = useState();
+
+  const fetchTaskData = async () => {
+    try {
+      const q = query(
+        collection(db, "project", `${docID}`, "task"),
+        where("id", "==", taskId)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setDocId(doc.id);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTaskData();
+  }, [docID, taskId]);
 
   const onSubmit = async (data) => {
     data.id = taskId;
     data.projectId = slug.projectId;
+    data.status = currentTask?.status;
+    data.createdDate = currentTask?.createdDate;
 
     try {
-      const q = query(collection(db, "task"), where("id", "==", data.id));
-      const querySnapshot = await getDocs(q);
-      let docId;
-      querySnapshot.forEach((doc) => {
-        docId = doc.id;
-      });
-      const collectionRef = doc(db, "task", docId);
-      await updateDoc(collectionRef, {
+      const colRef = doc(db, `project/${docID}/task/${docId}`);
+      await updateDoc(colRef, {
         taskname: data.taskname,
         taskdescription: data.taskdescription,
         taskpriority: data.taskpriority,
@@ -97,7 +113,7 @@ const TaskEditModal = ({ taskId }) => {
                 <select
                   {...register("taskpriority")}
                   className='d-block my-3 w-50'
-                  // defaultValue='High'
+                  defaultValue={currentTask?.taskpriority}
                 >
                   <option selected value=''>
                     Select priority

@@ -34,8 +34,6 @@ const ProjectDetail = () => {
     try {
       const q = query(collection(db, "project"));
       const doc = await getDocs(q);
-      // const data = doc.docs[0].data();
-      // const dataId = doc.docs[0].id;
       doc.forEach((doc) => {
         dispatch(Fetch_Project(doc.data()));
       });

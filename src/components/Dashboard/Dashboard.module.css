@@ -278,6 +278,18 @@ p {
   color: #787486;
 }
 
+.filtertext {
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+.filterText {
+  margin-left: 50px;
+  margin-bottom: 40px;
+}
+
 .maincontainerright .filtersection .filter .downarrowimage {
   margin-left: 12px;
   opacity: 0.8;
