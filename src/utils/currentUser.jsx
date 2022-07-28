@@ -20,8 +20,9 @@ const CurrentUser = () => {
         email: data.email,
         country: data.country,
         state: data.state,
-        uid: dataId,
+        uid: data.uid,
         url: data.url,
+        role: data.role,
       };
       dispatch(Get_CurrentUser(userData));
     } catch (err) {

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import userReducer from "./redux/userDetail/userDetailReducer";
 import taskReducer from "./redux/taskDetail/taskReducer";
 import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import currentUserReducer from "./redux/currentUser/currentUserReducer";
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   currentUserReducer,
   projectReducer,
   taskReducer,
+  userReducer,
 });
 const store = createStore(
   rootReducer,

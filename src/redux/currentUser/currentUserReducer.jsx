@@ -7,6 +7,7 @@ let initialState = {
   state: "",
   uid: "",
   url: "",
+  role: "",
 };
 
 const currentUserReducer = (state = initialState, action) => {

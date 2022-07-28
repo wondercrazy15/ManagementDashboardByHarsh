@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ProjectCreateModal = () => {
   const dispatch = useDispatch();
+  let currentUser = useSelector((state) => state.currentUserReducer);
+
   const {
     register,
     handleSubmit,
@@ -33,12 +35,19 @@ const ProjectCreateModal = () => {
   const onSubmit = async (data) => {
     const id = uuidv4();
     data.id = id;
+    data.user = currentUser?.uid;
+    data.viewer = [];
     try {
       await addDoc(collection(db, "project"), {
         id: id,
         projectname: data.projectname,
+        user: currentUser?.uid,
+        viewer: [],
       });
       dispatch(Add_Project(data));
+      reset({
+        projectname: "",
+      });
     } catch (error) {
       console.log(error);
     }

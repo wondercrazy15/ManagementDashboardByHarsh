@@ -55,6 +55,16 @@ const Dashboard = ({ children }) => {
                 <p className={styles.sidebarMenuContentText}>Home</p>
               </Link>
             </div>
+            {userDetail?.role && userDetail?.role === "Super Admin" && (
+              <div className={styles.sidebarMembers}>
+                <img src={tasks} alt='notaskimage' />
+                <Link to='/manage-project' className={styles.homeLink}>
+                  <p className={styles.sidebarMenuContentText}>
+                    Manage Project
+                  </p>
+                </Link>
+              </div>
+            )}
             <div className={styles.sidebarTasks}>
               <img src={tasks} alt='notaskimage' />
               <p className={styles.sidebarMenuContentText}>Tasks</p>

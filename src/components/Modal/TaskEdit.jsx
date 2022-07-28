@@ -21,6 +21,7 @@ const TaskEditModal = ({ taskId, docID }) => {
   const slug = useParams();
   const dispatch = useDispatch();
   const taskDetail = useSelector((state) => state.taskReducer);
+  let currentUser = useSelector((state) => state.currentUserReducer);
 
   const currentTask = taskDetail.find((item) => item.id === taskId);
   const {
@@ -99,33 +100,37 @@ const TaskEditModal = ({ taskId, docID }) => {
             </div>
             <div className='modal-body'>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <Input
-                  fieldName='taskname'
-                  type='text'
-                  register={register}
-                  errors={errors}
-                  placeHolder='Enter TaskName*'
-                  isRequired={true}
-                  minimLength={3}
-                  className='w-75'
-                  defaultValue={currentTask?.taskname}
-                />
-                <select
-                  {...register("taskpriority")}
-                  className='d-block my-3 w-50'
-                  defaultValue={currentTask?.taskpriority}
-                >
-                  <option selected value=''>
-                    Select priority
-                  </option>
-                  <option value='High'>High</option>
-                  <option value='Low'>Low</option>
-                </select>
-                <textarea
-                  {...register("taskdescription")}
-                  className='w-50'
-                  defaultValue={currentTask?.taskdescription}
-                />
+                {currentUser?.role === "Project Admin" && (
+                  <>
+                    <Input
+                      fieldName='taskname'
+                      type='text'
+                      register={register}
+                      errors={errors}
+                      placeHolder='Enter TaskName*'
+                      isRequired={true}
+                      minimLength={3}
+                      className='w-75'
+                      defaultValue={currentTask?.taskname}
+                    />
+                    <select
+                      {...register("taskpriority")}
+                      className='d-block my-3 w-50'
+                      defaultValue={currentTask?.taskpriority}
+                    >
+                      <option selected value=''>
+                        Select priority
+                      </option>
+                      <option value='High'>High</option>
+                      <option value='Low'>Low</option>
+                    </select>
+                    <textarea
+                      {...register("taskdescription")}
+                      className='w-50'
+                      defaultValue={currentTask?.taskdescription}
+                    />
+                  </>
+                )}
                 <button
                   type='submit'
                   className='btn btn-primary ms-3 btn-sm d-block'

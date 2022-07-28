@@ -110,7 +110,7 @@ const Signup = () => {
           country: data.country,
           url: photoUrl,
         });
-        navigate("/");
+        navigate("/dashboard");
       })
       .catch((error) => {
         setFirebaseError(error.message);

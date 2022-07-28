@@ -77,6 +77,7 @@ const TaskDetail = () => {
   const currentProject = projectDetail.find(
     (item) => item.id === slug.projectId
   );
+  let currentUser = useSelector((state) => state.currentUserReducer);
 
   const fetchProjectData = async () => {
     try {
@@ -473,14 +474,16 @@ const TaskDetail = () => {
                   <p className={styles.tododot}></p>
                   <p className={styles.todotext}>To Do</p>
                   <p className={styles.todolength}>{onTodoData.length}</p>
-                  <img
-                    src={inviteuser}
-                    alt='noinviteuserimage'
-                    className={styles.todoimage}
-                    type='button'
-                    data-bs-toggle='modal'
-                    data-bs-target='#exampleTaskModal'
-                  />
+                  {currentUser?.role === "Project Admin" && (
+                    <img
+                      src={inviteuser}
+                      alt='noinviteuserimage'
+                      className={styles.todoimage}
+                      type='button'
+                      data-bs-toggle='modal'
+                      data-bs-target='#exampleTaskModal'
+                    />
+                  )}
                   <TaskCreateModal docId={docId} />
                 </div>
                 <p className={styles.todoline}></p>
@@ -508,10 +511,12 @@ const TaskDetail = () => {
                               data-bs-toggle='dropdown'
                               aria-expanded='false'
                             >
-                              <img
-                                src={editdeleteproject}
-                                alt='noeditdeletetask'
-                              />
+                              {currentUser?.role === "Project Admin" && (
+                                <img
+                                  src={editdeleteproject}
+                                  alt='noeditdeletetask'
+                                />
+                              )}
                             </div>
                             <ul
                               className='dropdown-menu'

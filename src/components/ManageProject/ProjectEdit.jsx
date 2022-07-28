@@ -15,10 +15,10 @@ import {
 } from "firebase/firestore/lite";
 import { connectStorageEmulator } from "firebase/storage";
 
-const ProjectEditModal = ({ projectId }) => {
+const ProjectEdit = ({ projectID }) => {
   const dispatch = useDispatch();
   const projectDetail = useSelector((state) => state.projectReducer);
-  let currentProject = projectDetail.find((item) => item.id === projectId);
+  let currentProject = projectDetail.find((item) => item.id === projectID);
   let currentUser = useSelector((state) => state.currentUserReducer);
 
   const {
@@ -34,7 +34,7 @@ const ProjectEditModal = ({ projectId }) => {
   });
 
   const onSubmit = async (data) => {
-    data.id = projectId;
+    data.id = projectID;
     data.user = currentUser?.uid;
 
     try {
@@ -58,7 +58,7 @@ const ProjectEditModal = ({ projectId }) => {
     <>
       <div
         className='modal fade'
-        id='exampleEditProjectModal'
+        id='exampleEditModal'
         tabIndex='-1'
         aria-labelledby='exampleEditModalLabel'
         aria-hidden='true'
@@ -113,4 +113,4 @@ const ProjectEditModal = ({ projectId }) => {
   );
 };
 
-export default ProjectEditModal;
+export default ProjectEdit;
